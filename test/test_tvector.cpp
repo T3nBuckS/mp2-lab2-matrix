@@ -75,9 +75,10 @@ TEST(TDynamicVector, can_assign_vector_to_itself)
 {
 	int* a = new int[10] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	TDynamicVector<int> v(a, 10);
+	TDynamicVector<int> v2(a, 10);
 	delete[] a;
 	v = v;
-	EXPECT_EQ(v, v);
+	EXPECT_EQ(v, v2);
 }
 
 TEST(TDynamicVector, can_assign_vectors_of_equal_size)

@@ -111,6 +111,7 @@ TEST(TDynamicMatrix, throws_when_set_element_with_too_large_index)
 TEST(TDynamicMatrix, can_assign_matrix_to_itself)
 {
 	TDynamicMatrix<int> matrix(3);
+	TDynamicMatrix<int> matrix2(3);
 
 	int* pMem0 = new int [3] {1, 2, 3};
 	int* pMem1 = new int [3] {4, 5, 6};
@@ -128,7 +129,13 @@ TEST(TDynamicMatrix, can_assign_matrix_to_itself)
 	matrix[1] = v1;
 	matrix[2] = v2;
 
-	ASSERT_NO_THROW(matrix = matrix);
+	matrix2[0] = v0;
+	matrix2[1] = v1;
+	matrix2[2] = v2;
+
+	matrix = matrix;
+
+	EXPECT_EQ(matrix, matrix2);
 }
 
 TEST(TDynamicMatrix, can_assign_matrices_of_equal_size)
@@ -418,3 +425,198 @@ TEST(TDynamicMatrix, cant_subtract_matrixes_with_not_equal_size)
 	ASSERT_ANY_THROW(matrix - matrix_subtract);
 }
 
+TEST(TDynamicMatrix, can_multiplying_matrix_by_scalar) {
+
+	TDynamicMatrix<int> matrix(3);
+	TDynamicMatrix<int> matrix_result(3);
+
+	int val = 2;
+
+	int* pMem0 = new int [3] {1, 2, 3};
+	int* pMem1 = new int [3] {4, 5, 6};
+	int* pMem2 = new int[3] {7, 8, 9};
+
+	int* pMem_new_0 = new int [3] {2, 4, 6};
+	int* pMem_new_1 = new int [3] {8, 10, 12};
+	int* pMem_new_2 = new int [3] {14, 16, 18};
+
+	TDynamicVector<int> v0(pMem0, 3);
+	TDynamicVector<int> v1(pMem1, 3);
+	TDynamicVector<int> v2(pMem2, 3);
+
+	TDynamicVector<int> v_new_0(pMem_new_0, 3);
+	TDynamicVector<int> v_new_1(pMem_new_1, 3);
+	TDynamicVector<int> v_new_2(pMem_new_2, 3);
+
+	delete[] pMem0;
+	delete[] pMem1;
+	delete[] pMem2;
+
+	delete[] pMem_new_0;
+	delete[] pMem_new_1;
+	delete[] pMem_new_2;
+
+	matrix[0] = v0;
+	matrix[1] = v1;
+	matrix[2] = v2;
+
+	matrix_result[0] = v_new_0;
+	matrix_result[1] = v_new_1;
+	matrix_result[2] = v_new_2;
+
+	EXPECT_EQ(matrix * val, matrix_result);
+}
+
+TEST(TDynamicMatrix, can_multiplying_matrix_by_vector_with_correct_size) {
+
+	TDynamicMatrix<int> matrix(3);
+
+	int* pMem0 = new int [3] {1, 2, 3};
+	int* pMem1 = new int [3] {4, 5, 6};
+	int* pMem2 = new int[3] {7, 8, 9};
+
+	int* pMem_vector = new int [3] {1, 2, 3};
+	int* pMem_vector_result = new int [3] {14, 32, 50};
+
+	TDynamicVector<int> v0(pMem0, 3);
+	TDynamicVector<int> v1(pMem1, 3);
+	TDynamicVector<int> v2(pMem2, 3);
+
+	TDynamicVector<int> vector(pMem_vector, 3);
+	TDynamicVector<int> vector_result(pMem_vector_result, 3);
+
+	delete[] pMem0;
+	delete[] pMem1;
+	delete[] pMem2;
+
+	delete[] pMem_vector;
+	delete[] pMem_vector_result;
+
+	matrix[0] = v0;
+	matrix[1] = v1;
+	matrix[2] = v2;
+
+	EXPECT_EQ(matrix * vector, vector_result);
+}
+
+TEST(TDynamicMatrix, cant_multiplying_matrix_by_vector_with_not_correct_size) {
+
+	TDynamicMatrix<int> matrix(3);
+
+	int* pMem0 = new int [3] {1, 2, 3};
+	int* pMem1 = new int [3] {4, 5, 6};
+	int* pMem2 = new int[3] {7, 8, 9};
+
+	int* pMem_vector = new int [2] {1, 2};
+
+	TDynamicVector<int> v0(pMem0, 3);
+	TDynamicVector<int> v1(pMem1, 3);
+	TDynamicVector<int> v2(pMem2, 3);
+
+	TDynamicVector<int> vector(pMem_vector, 2);
+
+	delete[] pMem0;
+	delete[] pMem1;
+	delete[] pMem2;
+
+	delete[] pMem_vector;
+
+	matrix[0] = v0;
+	matrix[1] = v1;
+	matrix[2] = v2;
+
+	ASSERT_ANY_THROW(matrix * vector);
+}
+
+TEST(TDynamicMatrix, can_multiplying_matrix_by_matrix_with_correct_size) {
+
+	TDynamicMatrix<int> matrix(3);
+	TDynamicMatrix<int> matrix_multi(3);
+	TDynamicMatrix<int> matrix_result(3);
+
+	int* pMem0 = new int [3] {1, 2, 3};
+	int* pMem1 = new int [3] {4, 5, 6};
+	int* pMem2 = new int[3] {7, 8, 9};
+
+	int* pMem_multi_0 = new int [3] {1, 1, 1};
+	int* pMem_multi_1 = new int [3] {1, 1, 1};
+	int* pMem_multi_2 = new int [3] {1, 2, 3};
+
+	int* pMem_result_0 = new int [3] {6, 9, 12};
+	int* pMem_result_1 = new int [3] {15, 21, 27};
+	int* pMem_result_2 = new int [3] {24, 33, 42};
+
+	TDynamicVector<int> v0(pMem0, 3);
+	TDynamicVector<int> v1(pMem1, 3);
+	TDynamicVector<int> v2(pMem2, 3);
+
+	TDynamicVector<int> v_multi_0(pMem_multi_0, 3);
+	TDynamicVector<int> v_multi_1(pMem_multi_1, 3);
+	TDynamicVector<int> v_multi_2(pMem_multi_2, 3);
+
+	TDynamicVector<int> v_result_0(pMem_result_0, 3);
+	TDynamicVector<int> v_result_1(pMem_result_1, 3);
+	TDynamicVector<int> v_result_2(pMem_result_2, 3);
+
+	delete[] pMem0;
+	delete[] pMem1;
+	delete[] pMem2;
+
+	delete[] pMem_multi_0;
+	delete[] pMem_multi_1;
+	delete[] pMem_multi_2;
+
+	delete[] pMem_result_0;
+	delete[] pMem_result_1;
+	delete[] pMem_result_2;
+
+	matrix[0] = v0;
+	matrix[1] = v1;
+	matrix[2] = v2;
+
+	matrix_multi[0] = v_multi_0;
+	matrix_multi[1] = v_multi_1;
+	matrix_multi[2] = v_multi_2;
+
+	matrix_result[0] = v_result_0;
+	matrix_result[1] = v_result_1;
+	matrix_result[2] = v_result_2;
+
+	EXPECT_EQ(matrix * matrix_multi, matrix_result);
+}
+
+TEST(TDynamicMatrix, cant_multiplying_matrix_by_matrix_with_not_correct_size) {
+
+	TDynamicMatrix<int> matrix(3);
+	TDynamicMatrix<int> matrix_multi(2);
+
+	int* pMem0 = new int [3] {1, 2, 3};
+	int* pMem1 = new int [3] {4, 5, 6};
+	int* pMem2 = new int[3] {7, 8, 9};
+
+	int* pMem_multi_0 = new int [2] {1, 1};
+	int* pMem_multi_1 = new int [2] {1, 1};
+
+	TDynamicVector<int> v0(pMem0, 3);
+	TDynamicVector<int> v1(pMem1, 3);
+	TDynamicVector<int> v2(pMem2, 3);
+
+	TDynamicVector<int> v_multi_0(pMem_multi_0, 2);
+	TDynamicVector<int> v_multi_1(pMem_multi_1, 2);
+
+	delete[] pMem0;
+	delete[] pMem1;
+	delete[] pMem2;
+
+	delete[] pMem_multi_0;
+	delete[] pMem_multi_1;
+
+	matrix[0] = v0;
+	matrix[1] = v1;
+	matrix[2] = v2;
+
+	matrix_multi[0] = v_multi_0;
+	matrix_multi[1] = v_multi_1;
+
+	ASSERT_ANY_THROW(matrix * matrix_multi);
+}

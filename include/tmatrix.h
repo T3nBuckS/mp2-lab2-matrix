@@ -28,7 +28,7 @@ public:
   {
     if (sz == 0)
       throw out_of_range("Vector size should be greater than zero");
-    if (sz >= MAX_VECTOR_SIZE)
+    if (sz > MAX_VECTOR_SIZE)
         throw out_of_range("maximum_vector_size");
     pMem = new T[sz]();// {}; // У типа T д.б. конструктор по умолчанию
   }
@@ -221,10 +221,16 @@ public:
   // сравнение
   bool operator==(const TDynamicMatrix& m) const noexcept
   {
-      for (size_t i = 0; i < sz; i++)
-          if (pMem[i] != m.pMem[i])
-              return 0;
+      if (sz != m.sz) {
+          return 0;
+      }
+      else {
+          for (size_t i = 0; i < sz; i++)
+              if (pMem[i] != m.pMem[i])
+                  return 0;
+      }
       return 1;
+   
   }
 
   bool operator!=(const TDynamicMatrix& m) const noexcept
@@ -245,7 +251,7 @@ public:
   // матрично-векторные операции
   TDynamicVector<T> operator*(const TDynamicVector<T>& v)
   {
-      if (sz != v.sz) {
+      if (pMem[0].size() != v.size()) {
           throw logic_error("Incorrect dimensions");
       }
       TDynamicVector<T> res(sz);
